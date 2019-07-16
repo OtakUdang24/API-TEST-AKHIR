@@ -21,6 +21,9 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
-  Route.resource('users', 'UserController')
-  Route.resource('questions', 'QuestionController')
+  Route.post('users', 'UserController.store') 
+  Route.get('questions', 'QuestionController.index')
+  Route.get('answers', 'AnswerController.index') 
+  Route.post('answers', 'AnswerController.store') 
 }).prefix('api/v1')
+// get, try catch,

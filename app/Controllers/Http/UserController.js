@@ -50,11 +50,21 @@ class UserController {
     if (validation.fails()) {
       return response.send({ status: 0, message: validation.messages() });
     } else {
-      const user = new User();
-      user.name = request.input("name");
-      user.email = request.input("email");
-      user.phone_number = request.input("phone_number");
-      await user.save();
+      try {
+        const user = new User();
+        user.name = request.input("name");
+        user.email = request.input("email");
+        user.phone_number = request.input("phone_number");
+        await user.save(); 
+        const userData = await User
+          .query()
+          .select('id', 'name', 'email', 'phone_number')
+          .where('email', request.input("email"))
+          .fetch()
+        return response.status(200).send({ status: 1, message: 'ok', data: userData })
+      } catch (error) {
+        return response.status(error.status).send(error)
+      }
     }
   }
 

@@ -20,9 +20,41 @@ class QuestionController {
   async index ({ request, response, view }) {
     try {
       const questions = await Question.all()
-      return response.send({ status: 0, data : questions });
+      let result = []
+      for(let a = 0;a < questions.rows.length; a++){
+        if(questions.rows[a].options){
+          if(questions.rows[a].type === 'multi select'){
+            result.push({
+              id: questions.rows[a].id,
+              number: questions.rows[a].number,
+              description: questions.rows[a].description,
+              type: questions.rows[a].type,
+              options: questions.rows[a].options.split(","),
+              checked: []
+            })
+          }else{
+            result.push({
+              id: questions.rows[a].id,
+              number: questions.rows[a].number,
+              description: questions.rows[a].description,
+              type: questions.rows[a].type,
+              options: questions.rows[a].options.split(","),
+              checked: null
+            })
+          }
+        }else{
+          result.push({
+            id: questions.rows[a].id,
+            number: questions.rows[a].number,
+            description: questions.rows[a].description,
+            type: questions.rows[a].type,
+            value: ''
+          })
+        }
+      }
+      return response.status(200).send({ data: result });
     } catch (error) {
-      return response.send({ status: 0, message: error});
+      return response.status(error.status).send(error)
     }
   }
 
